@@ -13,19 +13,41 @@ const roadMap = () => {
 // CAR OBJECT
 let carObj = {
 	x: 122,
-	y: 350
+	y: 350,
+	width: 35,
+	height: 60
 };
 
 // OBSTICLE OBJECT
-let obsticle = {
+let obsticle1 = {
+	x: Math.floor(Math.random() * 180),
+	y: 0,
+	width: 100,
+	height: 20
+};
+let obsticle2 = {
 	x: Math.floor(Math.random() * 180),
 	y: 0
 };
 
 // OBSTICLE DRAWING
 const obsticleDrawing = () => {
+	// 1st Ob
+	ctx.fillStyle = 'blue';
+	ctx.fillRect(obsticle1.x, (obsticle1.y += 2), 100, 20);
+	// 2nd Ob
 	ctx.fillStyle = 'red';
-	ctx.fillRect(obsticle.x, obsticle.y, 80, 20);
+	ctx.fillRect(obsticle2.x, (obsticle2.y += 3), 80, 20);
+
+	if (obsticle1.y >= 350) {
+		obsticle1.y = 0;
+		obsticle1.x = Math.floor(Math.random() * 180);
+	}
+
+	if (obsticle2.y >= 350) {
+		obsticle2.y = 0;
+		obsticle2.x = Math.floor(Math.random() * 180);
+	}
 };
 
 // CAR IMAGE LOADED
@@ -49,42 +71,35 @@ document.body.onkeypress = function(e) {
 	}
 };
 
-// AVOID COLLISION
+// COUNT POINTS
+let total = 0;
+let rect1 = obsticle1;
+let rect2 = carObj;
 
-// const detectCollision = () => {
-// 	let total = 0;
+const detectCollision = () => {
 
-// 	let rect1 = { x: obsticle.x, y: obsticle.y, width: 80, height: 20 }; //Our obsticle
-
-// 	let rect2 = { x: carObj.x, y: carObj.y, width: 35, height: 60 }; //Our car
-
-// 	if (
-// 		!rect1.x < rect2.x + rect2.width &&
-// 		!rect1.x + rect1.width > rect2.x &&
-// 		!rect1.y < rect2.y + rect2.height &&
-// 		!rect1.y + rect1.height > rect2.y
-// 	) {
-// 		total += 10;
-// 	}
-// 	return total;
-// };
+	if (rect1.y + rect1.height < rect2.y) {
+		total++
+	} else {
+		total = 0
+	}
+};
 
 window.onload = () => {
 	document.getElementById('start-button').onclick = () => {
 		startGame();
 	};
-
+	
 	// START GAME FUNCTION
 	function startGame() {
 		// Score Board
-		// document.querySelector('h2').innerText = `Score : ${total}`;
+		document.querySelector('h2').innerText = `Score : ${total}`
 
 		// EXECUTING ROAD MAP
 		roadMap();
 
 		// EXECUTING CAR DRAWING
 		carDrawing();
-		
 
 		// ANIMATE FUNCTION
 		const animate = () => {
@@ -92,6 +107,7 @@ window.onload = () => {
 
 			carDrawing(); // Car Drawing
 			obsticleDrawing(); // Obsticle Drawing
+			detectCollision();
 
 			animateId = window.requestAnimationFrame(animate); //Game rendering -infinite loop that goes super fast
 		};
